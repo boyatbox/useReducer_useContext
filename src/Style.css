@@ -1,0 +1,42 @@
+:root {
+  --cloud: #05637a;
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+.container {
+  display: grid;
+  grid-template-columns: 2fr 5fr;
+}
+
+.labelSpan {
+  color: var(--cloud);
+  font-weight: bold;
+}
+
+.itemList,
+.itemDetails {
+  border-top: solid 1px rgb(146, 8, 49);
+  border-right: solid 1px rgb(146, 8, 49);
+  /* color:red; */
+}
+
+.parent {
+  border: solid 1px rgb(146, 8, 49);
+  /* color:red; */
+}
+
+.listStyle {
+  list-style-type: none;
+  color: "black";
+  padding-left: 0;
+  margin-left: 0;
+}
+
+.listStyle li {
+  padding-left: 0;
+  padding-right: 0;
+  padding-top: "0.5rem";
+  padding-bottom: "0.5rem";
+}
