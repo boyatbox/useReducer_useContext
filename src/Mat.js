@@ -17,11 +17,14 @@ import axios from "axios";
 import { useState } from "react";
 
 async function getUserList() {
-  const {data}= await axios.get("http://localhost:5000/user/getall");
+  const { data } = await axios.get("http://localhost:5000/user/getall");
   return data;
 }
 
-async function getUserDeatils(userid) {
+async function getUserDeatils({ queryKey }) {
+    
+    const [_key, { userid }] = queryKey;
+
   return await axios.get("http://localhost:5000/user/GetById", {
     params: {
       id: userid,
@@ -30,16 +33,16 @@ async function getUserDeatils(userid) {
 }
 
 export default function MatList() {
-
   const [userid, setUserId] = useState();
   function displayUserDetails(id) {
     setUserId(id);
   }
 
-//   const { data: dataR, error: errorR, loading: landingR }= useQuery(
-//     "getUserDeatils-" + userid,
-//     getUserDeatils(userid)
-//   );
+  const {
+    data: dataR,
+    error: errorR,
+    loading: landingR,
+  } = useQuery(["user", { userid }], (userid) => getUserDeatils(userid));
 
   const { isLoading, isError, data } = useQuery("listuser", getUserList);
 
