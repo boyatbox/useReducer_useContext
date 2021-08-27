@@ -15,34 +15,23 @@ import Typography from "@material-ui/core/Typography";
 import { QueryClient, QueryClientProvider, useQuery } from "react-query";
 import axios from "axios";
 import { useState } from "react";
+import Chip from '@material-ui/core/Chip';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import UserDetails from './UserDetails'
+
 
 async function getUserList() {
   const { data } = await axios.get("http://localhost:5000/user/getall");
   return data;
 }
 
-async function getUserDeatils({ queryKey }) {
-    
-    const [_key, { userid }] = queryKey;
 
-  return await axios.get("http://localhost:5000/user/GetById", {
-    params: {
-      id: userid,
-    },
-  });
-}
 
 export default function MatList() {
   const [userid, setUserId] = useState();
   function displayUserDetails(id) {
     setUserId(id);
   }
-
-  const {
-    data: dataR,
-    error: errorR,
-    loading: landingR,
-  } = useQuery(["user", { userid }], (userid) => getUserDeatils(userid));
 
   const { isLoading, isError, data } = useQuery("listuser", getUserList);
 
@@ -54,13 +43,11 @@ export default function MatList() {
     return "Error";
   }
 
-  console.log("data=", data);
-
   return (
     <div>
-      <Grid container spacing={1}>
+      <Grid container spacing={0}>
         <Grid item xs={3}>
-          <List component="nav" aria-label="secondary mailbox folders">
+          <List dense component="nav" style={{maxHeight:'100vh',maxwidth:'100vw',overflow:'auto'}}>
             {data.map((p) => {
               return (
                 <>
@@ -70,19 +57,7 @@ export default function MatList() {
                     onClick={(e) => displayUserDetails(p.id)}
                   >
                     <ListItemText
-                      primary={p.name}
-                      secondary={
-                        <>
-                          <Typography
-                            component="span"
-                            variant="body2"
-                            color="textPrimary"
-                          >
-                            Id:
-                          </Typography>
-                          {p.id}
-                        </>
-                      }
+                      primary={<><Chip size="small" label= {p.id} style={{marginRight:'1rem'}}/>{p.name} </>}
                     />
                   </ListItem>
                 </>
@@ -91,44 +66,7 @@ export default function MatList() {
           </List>
         </Grid>
         <Grid item xs={9}>
-          <Card variant="outlined">
-            <CardContent>
-              <Typography variant="h6" color="textPrimary" gutterBottom>
-                Account
-              </Typography>
-              <Divider />
-              <Typography
-                variant="body2"
-                component="span"
-                style={{ marginRight: "0.3rem" }}
-              >
-                Name:
-              </Typography>
-              <Typography variant="caption" component="span">
-                jgasdj akshdjkasdh
-              </Typography>
-              <Divider />
-              <Typography
-                variant="body2"
-                component="span"
-                style={{ marginRight: "0.3rem" }}
-              >
-                ID:
-              </Typography>
-
-              <Typography variant="caption" component="span">
-                {"dataR.data.id"}
-              </Typography>
-            </CardContent>
-            <CardActions>
-              <Button size="small" variant="outlined" color="primary">
-                Update
-              </Button>
-              <Button size="small" variant="outlined" color="secondary">
-                Delete
-              </Button>
-            </CardActions>
-          </Card>
+          <UserDetails userid={userid} />
         </Grid>
       </Grid>
     </div>
