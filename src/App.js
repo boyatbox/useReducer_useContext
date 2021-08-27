@@ -6,6 +6,9 @@ import { QueryClient, QueryClientProvider, useQuery } from "react-query";
 import {getDataAwait} from "./API";
 import axios from "axios";
 import MatList from './Mat'
+import Layout from './Layout'
+import { createTheme, makeStyles, ThemeProvider } from '@material-ui/core/styles';
+import theme from './MatTheme'
 
 const queryClient = new QueryClient();
 const AppContext = React.createContext();
@@ -53,8 +56,11 @@ function App() {
   // });
   return (
     <QueryClientProvider client={queryClient}>
+      <ThemeProvider theme={theme}>
       {/* <Parent /> */}
-      <MatList/>
+      {/* <MatList/> */}
+      <Layout/>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }
