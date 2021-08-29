@@ -3,14 +3,31 @@ import React from "react";
 import data from "./Data";
 import css from "./Style.css";
 import { QueryClient, QueryClientProvider, useQuery } from "react-query";
-import {getDataAwait} from "./API";
+import { getDataAwait } from "./API";
 import axios from "axios";
-import MatList from './Mat'
-import Layout from './Layout'
-import { createTheme, makeStyles, ThemeProvider } from '@material-ui/core/styles';
-import theme from './MatTheme'
+import Account from "./Account";
+import Layout from "./Layout";
+import {
+  createTheme,
+  makeStyles,
+  ThemeProvider,
+} from "@material-ui/core/styles";
+import theme from "./MatTheme";
+import { ReactQueryDevtools } from "react-query/devtools";
 
+const twentyFourHoursInMs = 1000 * 60 * 60 * 24;
 const queryClient = new QueryClient();
+// const queryClient = new QueryClient({
+//   defaultOptions: {
+//     queries: {
+//       refetchOnWindowFocus: false,
+//       refetchOnmount: false,
+//       refetchOnReconnect: false,
+//       retry: false,
+//       staleTime: twentyFourHoursInMs,
+//     },
+//   },
+// });
 const AppContext = React.createContext();
 
 const initState = [];
@@ -36,7 +53,7 @@ function reducer(state, action) {
 
 function App() {
   console.log("Rendering app..");
-  const [state,setState]=useState(Date.now)
+  const [state, setState] = useState(Date.now);
 
   // useEffect(() => {
   //   let response = getData();
@@ -56,10 +73,11 @@ function App() {
   // });
   return (
     <QueryClientProvider client={queryClient}>
+      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
       <ThemeProvider theme={theme}>
-      {/* <Parent /> */}
-      {/* <MatList/> */}
-      <Layout/>
+        {/* <Parent /> */}
+        {/* <MatList/> */}
+        <Layout />
       </ThemeProvider>
     </QueryClientProvider>
   );
@@ -68,18 +86,27 @@ function App() {
 function Parent() {
   const [state, dispatch] = useReducer(reducer, initState);
 
-  const { isLoading, isError, data } = useQuery("testdata",getDataAwait);
+  const { isLoading, isError, data } = useQuery("testdata", getDataAwait);
 
-  if(isLoading){
-    return 'loading..';
+  if (isLoading) {
+    return "loading..";
   }
 
-  if(isError){
-    return 'Error';
+  if (isError) {
+    return "Error";
   }
 
-  return <div>{data.map(o=>{return <p>{o.id} - {o.email}</p>})}</div>
-
+  return (
+    <div>
+      {data.map((o) => {
+        return (
+          <p>
+            {o.id} - {o.email}
+          </p>
+        );
+      })}
+    </div>
+  );
 }
 
 function ItemList() {
