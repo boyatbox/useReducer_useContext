@@ -28,6 +28,7 @@ import TrainIcon from '@material-ui/icons/Train';
 import BeachAccessIcon from '@material-ui/icons/BeachAccess';
 import FlightIcon from '@material-ui/icons/Flight';
 import FlightTakeoffIcon from '@material-ui/icons/FlightTakeoff';
+import Product from "./Product";
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -132,6 +133,8 @@ export default function PersistentDrawerLeft() {
     switch (component) {
       case "Account":
         return <Account />;
+        case "Product":
+        return <Product />;
       default:
         return <NotFound />;
     }

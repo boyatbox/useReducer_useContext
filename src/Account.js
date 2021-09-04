@@ -11,6 +11,7 @@ import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
+import {useListItemStyle} from "./Styles";
 
 import { QueryClient, QueryClientProvider, useQuery } from "react-query";
 import axios from "axios";
@@ -26,11 +27,12 @@ let OneHourMinInMs=1000*60*60;
 let count=0;
 async function getUserList() {
   const { data } = await axios.get("http://localhost:5000/user/getall");
-  console.log("API_CALL: getUserList");
+  // console.log("API_CALL: getUserList");
   return data;
 }
 
 export default function Account() {
+  const classes = useListItemStyle();
   const [userid, setUserId] = useState();
   function displayUserDetails(id) {
     setUserId(id);
@@ -38,13 +40,13 @@ export default function Account() {
   
 
   useEffect(() => {
-    console.log("Mount: Account");
+    // console.log("Mount: Account");
     return () => {
-      console.log('Unmount: Account');
+      // console.log('Unmount: Account');
       count=0;
   }
   }, []);
-  console.log(`Render ${count}: Account`);
+  // console.log(`Render ${count}: Account`);
   count++;
 
   const { isLoading, isError, data } = useQuery("listuser", getUserList,{
@@ -98,6 +100,7 @@ export default function Account() {
                     button
                     divider
                     onClick={(e) => displayUserDetails(p.id)}
+                    className={userid===p.id?classes.listItemSelected:classes.listItem}
                   >
                     <ListItemText
                       primary={
@@ -105,7 +108,7 @@ export default function Account() {
                           <Chip
                             size="small"
                             label={p.id}
-                            style={{ marginRight: "1rem" }}
+                            className={classes.chipId}
                           />
                           {p.name}{" "}
                         </>

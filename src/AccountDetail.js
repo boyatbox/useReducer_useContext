@@ -11,7 +11,7 @@ import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
-
+import NativeSelect from "@material-ui/core/NativeSelect";
 import { QueryClient, QueryClientProvider, useQuery } from "react-query";
 import axios from "axios";
 import { useEffect, useReducer, useRef, useState } from "react";
@@ -40,26 +40,8 @@ async function getUserDeatils({ queryKey }) {
   });
 }
 
-function toggleReducer(state, action) {
-  switch (action.type) {
-    case "TOGGLE_EDIT":
-      return action.payload;
-    default:
-      break;
-  }
-}
-
-function saveChangeReducer(satte, action) {
-  switch (action.type) {
-    case "SHOW_SAVE_CHANGES":
-      return action.payload;
-    default:
-      break;
-  }
-}
-
 export default function AccountDetail(props) {
-  const [name, setName] = useState();
+  // console.log("Rendering AccountDetail");
   const userid = props.userid;
   const { isLoading, isError, data } = useQuery(
     ["userdetails", userid],
@@ -71,23 +53,22 @@ export default function AccountDetail(props) {
       refetchOnMount: false,
     }
   );
-  console.log("name=", name);
-
-  const [editState, dispatch] = useReducer(toggleReducer, initEditState);
-  const initialVal = useRef();
 
   useEffect(() => {
-    dispatch({ payload: initEditState, type: "TOGGLE_EDIT" });
-  }, [props.userid]);
+    console.log("AccountDetail mounted");
+  }, []);
 
-  function clickHandler(item) {
-    let merge = { ...initEditState, ...item };
-    dispatch({ payload: merge, type: "TOGGLE_EDIT" });
-  }
+  useEffect(() => {
+    console.log("AccountDetail rendered");
+  });
 
-  function handleNameChange(e) {
-    setName(e.target.value);
-  }
+  useEffect(() => {
+    return () => {
+      console.log("AccountDetail unmounted");
+    };
+  }, []);
+
+  const initialVal = useRef();
 
   if (!props.userid) {
     return <p>Select a user</p>;
@@ -132,122 +113,113 @@ export default function AccountDetail(props) {
         </Typography>
         <Divider variant="fullWidth" />
         <List component="nav" disablePadding dense aria-label="mailbox folders">
-          <ListItem divider>
-            <ListItemText primary={"ID: " + data.data.id} />
-          </ListItem>
-          <ListItem divider>
-            {editState.name ? (
-              <>
-                <ListItemText
-                  primary="Name"
-                  // secondary={<TextField fullWidth value={name} onChange={{handleNameChange}}/>}
-                  secondary={<TextField fullWidth value={name} onChange={{handleNameChange}}/>}
-                />
-                <IconButton
-                  aria-label="delete"
-                  onClick={() => {
-                    clickHandler({ name: false });
-                  }}
-                >
-                  <DoneIcon fontSize="small" />
-                </IconButton>
-              </>
-            ) : (
-              <>
-                <ListItemText primary="Name" secondary={data.data.name} />
-                <IconButton
-                  aria-label="delete"
-                  onClick={() => {
-                    clickHandler({ name: true });
-                  }}
-                >
-                  <EditIcon fontSize="small" />
-                </IconButton>
-              </>
-            )}
-          </ListItem>
-          <ListItem>
-            {editState.email ? (
-              <>
-                <ListItemText
-                  primary="Email"
-                  secondary={
-                    <TextField fullWidth defaultValue={data.data.email} />
-                  }
-                />
-                <IconButton
-                  aria-label="delete"
-                  onClick={() => {
-                    clickHandler({ email: false });
-                  }}
-                >
-                  <DoneIcon fontSize="small" />
-                </IconButton>
-              </>
-            ) : (
-              <>
-                <ListItemText primary="Email" secondary={data.data.email} />
-                <IconButton
-                  aria-label="delete"
-                  onClick={() => {
-                    clickHandler({ email: true });
-                  }}
-                >
-                  <EditIcon fontSize="small" />
-                </IconButton>
-              </>
-            )}
-          </ListItem>
-          <Divider light />
-          <ListItem>
-            {editState.address ? (
-              <>
-                <ListItemText
-                  primary="Address"
-                  secondary={
-                    <TextField
-                      fullWidth
-                      defaultValue={data.data.address + " ," + data.data.city}
-                    />
-                  }
-                />
-                <IconButton
-                  aria-label="delete"
-                  onClick={() => {
-                    clickHandler({ address: false });
-                  }}
-                >
-                  <DoneIcon fontSize="small" />
-                </IconButton>
-              </>
-            ) : (
-              <>
-                <ListItemText
-                  primary="Address"
-                  secondary={data.data.address + " ," + data.data.city}
-                />
-                <IconButton
-                  aria-label="delete"
-                  onClick={() => {
-                    clickHandler({ address: true });
-                  }}
-                >
-                  <EditIcon fontSize="small" />
-                </IconButton>
-              </>
-            )}
-          </ListItem>
-          <Divider light />
+          <LineItem txtPrimary="Account" txtSecondary={data.data.id} />
+          <LineItem txtPrimary="Name" txtSecondary={data.data.name} editable />
+          <LineItem
+            txtPrimary="Email"
+            txtSecondary={data.data.email}
+            editable
+          />
+          <LineItem
+            txtPrimary="Address"
+            txtSecondary={data.data.address + " ," + data.data.city}
+            editable
+          />
+          {/* <LineItemSelect
+            txtPrimary="Role"
+            txtSecondary={data.data.address + " ," + data.data.city}
+            editable
+          /> */}
         </List>
       </CardContent>
       <CardActions>
-        <Button size="small" variant="outlined" color="primary">
+        <Button
+          disableElevation
+          size="small"
+          variant="contained"
+          color="primary"
+        >
           Update
         </Button>
-        <Button size="small" variant="outlined" color="secondary">
+        <Button
+          disableElevation
+          size="small"
+          variant="contained"
+          color="secondary"
+        >
           Delete
         </Button>
       </CardActions>
     </Card>
   );
+}
+
+function LineItem({ txtPrimary, txtSecondary, editable }) {
+  const [toggleEdit, setToggleEdit] = useState(false);
+  // console.log('Rendering LineItem. toggleEdit=',toggleEdit);
+
+  useEffect(() => {
+    console.log("LineItem mounted");
+  }, []);
+
+  useEffect(() => {
+    console.log("LineItem rendered");
+  });
+
+  useEffect(() => {
+    return () => {
+      console.log("LineItem unmounted");
+    };
+  }, []);
+
+  if (!editable) {
+    return (
+      <>
+        <ListItem divider>
+          <ListItemText primary={txtPrimary} secondary={txtSecondary} />
+        </ListItem>
+      </>
+    );
+  }
+
+  if (editable && !toggleEdit) {
+    // console.log('editable && !toggleEdit',toggleEdit);
+    return (
+      <>
+        <ListItem divider>
+          <ListItemText primary={txtPrimary} secondary={txtSecondary} />
+          <IconButton
+            aria-label="delete"
+            onClick={() => {
+              setToggleEdit(true);
+            }}
+          >
+            <EditIcon fontSize="small" />
+          </IconButton>
+        </ListItem>
+      </>
+    );
+  }
+
+  if (editable && toggleEdit) {
+    // console.log('editable && toggleEdit',toggleEdit);
+    return (
+      <>
+        <ListItem divider>
+          <ListItemText
+            primary={txtPrimary}
+            secondary={<TextField fullWidth value={txtSecondary} />}
+          />
+          <IconButton
+            aria-label="delete"
+            onClick={() => {
+              setToggleEdit(false);
+            }}
+          >
+            <DoneIcon fontSize="small" />
+          </IconButton>
+        </ListItem>
+      </>
+    );
+  }
 }
